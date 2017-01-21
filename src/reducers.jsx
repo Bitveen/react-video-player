@@ -30,8 +30,33 @@ const playlist = (state = defaultPlaylistState, action) => {
 
 
 
+const defaultPlayerState = {
+    paused: true,
+    duration: 0,
+    currentPosition: 0,
+    fullscreen: false
+};
+const player = (state = defaultPlayerState, action) => {
+    switch (action.type) {
+        case ActionTypes.PLAY_VIDEO:
+            return Object.assign({}, state, {
+                paused: false
+            });
+        case ActionTypes.PAUSE_VIDEO:
+            return Object.assign({}, state, {
+                paused: true
+            });
+        default:
+            return state;
+    }
+};
+
+
+
+
 
 export default combineReducers({
     routing: routerReducer,
-    playlist: playlist
+    playlist: playlist,
+    player: player
 });

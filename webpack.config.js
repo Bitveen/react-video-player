@@ -12,6 +12,7 @@ module.exports = {
             NotFound: 'components/NotFound.jsx',
             Playlist: 'components/playlist/Playlist.jsx',
             VideoPlayer: 'components/player/VideoPlayer.jsx',
+            VideoControls: 'components/player/VideoControls.jsx',
             Navbar: 'components/Navbar.jsx',
             PlaylistItem: 'components/playlist/PlaylistItem.jsx',
             routes: 'routes.jsx',

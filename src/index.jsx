@@ -11,10 +11,15 @@ import rootReducer from 'reducers';
 const store = createStore(rootReducer);
 const history = syncHistoryWithStore(browserHistory, store);
 
+store.subscribe(() => {
+    console.log(store.getState());
+});
 
 const appProvider = (
     <Provider store={store}>
         <Routes history={history} />
     </Provider>
 );
+
+
 ReactDOM.render(appProvider, document.getElementById('app'));

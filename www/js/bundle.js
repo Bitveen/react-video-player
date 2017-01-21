@@ -66,7 +66,7 @@
 
 	var _routes2 = _interopRequireDefault(_routes);
 
-	var _reducers = __webpack_require__(281);
+	var _reducers = __webpack_require__(282);
 
 	var _reducers2 = _interopRequireDefault(_reducers);
 
@@ -75,11 +75,16 @@
 	var store = (0, _redux.createStore)(_reducers2.default);
 	var history = (0, _reactRouterRedux.syncHistoryWithStore)(_reactRouter.browserHistory, store);
 
+	store.subscribe(function () {
+	    console.log(store.getState());
+	});
+
 	var appProvider = _react2.default.createElement(
 	    _reactRedux.Provider,
 	    { store: store },
 	    _react2.default.createElement(_routes2.default, { history: history })
 	);
+
 	_reactDom2.default.render(appProvider, document.getElementById('app'));
 
 /***/ },
@@ -29055,7 +29060,7 @@
 
 	var _VideoPlayer2 = _interopRequireDefault(_VideoPlayer);
 
-	var _NotFound = __webpack_require__(280);
+	var _NotFound = __webpack_require__(281);
 
 	var _NotFound2 = _interopRequireDefault(_NotFound);
 
@@ -29251,7 +29256,9 @@
 	    return _react2.default.createElement(
 	        _reactRouter.Link,
 	        { className: 'list-group-item', to: '/video/' + url },
-	        url
+	        url,
+	        ' ',
+	        _react2.default.createElement('span', { className: 'glyphicon glyphicon-play' })
 	    );
 	};
 
@@ -29267,13 +29274,33 @@
 	    value: true
 	});
 
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
 
 	var _reactRedux = __webpack_require__(254);
 
+	var _VideoControls = __webpack_require__(280);
+
+	var _VideoControls2 = _interopRequireDefault(_VideoControls);
+
+	var _actions = __webpack_require__(284);
+
+	var _reactDom = __webpack_require__(32);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var mapStateToProps = function mapStateToProps(state, _ref) {
 	    var url = _ref.params.url;
@@ -29283,35 +29310,183 @@
 	        url: url
 	    };
 	};
-
-	var VideoPlayer = function VideoPlayer(_ref2) {
-	    var player = _ref2.player,
-	        url = _ref2.url;
-
-	    return _react2.default.createElement(
-	        'div',
-	        { className: 'video-player' },
-	        _react2.default.createElement(
-	            'h3',
-	            null,
-	            'VideoPlayer'
-	        ),
-	        _react2.default.createElement(
-	            'div',
-	            { className: 'embed-responsive embed-responsive-16by9' },
-	            _react2.default.createElement(
-	                'video',
-	                { className: 'embed-responsive-item', controls: true },
-	                _react2.default.createElement('source', { src: '/video/' + url + '.mkv', type: 'video/mp4' })
-	            )
-	        )
-	    );
+	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+	    return {
+	        playVideo: function playVideo() {
+	            return dispatch((0, _actions.playVideo)());
+	        },
+	        pauseVideo: function pauseVideo() {
+	            return dispatch((0, _actions.pauseVideo)());
+	        }
+	    };
 	};
 
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(VideoPlayer);
+	var VideoPlayer = function (_React$Component) {
+	    _inherits(VideoPlayer, _React$Component);
+
+	    function VideoPlayer(props) {
+	        _classCallCheck(this, VideoPlayer);
+
+	        var _this = _possibleConstructorReturn(this, (VideoPlayer.__proto__ || Object.getPrototypeOf(VideoPlayer)).call(this, props));
+
+	        _this.play = _this.play.bind(_this);
+	        _this.pause = _this.pause.bind(_this);
+	        return _this;
+	    }
+
+	    _createClass(VideoPlayer, [{
+	        key: 'play',
+	        value: function play() {
+	            var videoElem = this.refs.player;
+	            videoElem.play();
+	            this.props.playVideo();
+	        }
+	    }, {
+	        key: 'pause',
+	        value: function pause() {
+	            var videoElem = this.refs.player;
+	            videoElem.pause();
+	            this.props.pauseVideo();
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var _props = this.props,
+	                player = _props.player,
+	                url = _props.url;
+
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'video-player' },
+	                _react2.default.createElement(
+	                    'h3',
+	                    null,
+	                    'VideoPlayer'
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'embed-responsive embed-responsive-16by9' },
+	                    _react2.default.createElement(
+	                        'video',
+	                        { className: 'embed-responsive-item', id: 'player', ref: 'player' },
+	                        _react2.default.createElement('source', { src: '/video/' + url + '.mkv', type: 'video/mp4' })
+	                    )
+	                ),
+	                _react2.default.createElement('hr', null),
+	                _react2.default.createElement(_VideoControls2.default, _extends({}, player, { play: this.play, pause: this.pause }))
+	            );
+	        }
+	    }]);
+
+	    return VideoPlayer;
+	}(_react2.default.Component);
+
+	;
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(VideoPlayer);
 
 /***/ },
 /* 280 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var VideoControls = function (_React$Component) {
+	    _inherits(VideoControls, _React$Component);
+
+	    function VideoControls(props) {
+	        _classCallCheck(this, VideoControls);
+
+	        return _possibleConstructorReturn(this, (VideoControls.__proto__ || Object.getPrototypeOf(VideoControls)).call(this, props));
+	    }
+
+	    _createClass(VideoControls, [{
+	        key: "render",
+	        value: function render() {
+	            var _props = this.props,
+	                play = _props.play,
+	                pause = _props.pause,
+	                paused = _props.paused;
+
+
+	            var renderPlayPause = function renderPlayPause() {
+	                if (paused) {
+	                    return _react2.default.createElement(
+	                        "button",
+	                        { className: "btn btn-default btn-sm", onClick: function onClick() {
+	                                return play();
+	                            } },
+	                        _react2.default.createElement("span", { className: "glyphicon glyphicon-play" })
+	                    );
+	                }
+	                return _react2.default.createElement(
+	                    "button",
+	                    { className: "btn btn-default btn-sm", onClick: function onClick() {
+	                            return pause();
+	                        } },
+	                    _react2.default.createElement("span", { className: "glyphicon glyphicon-pause" })
+	                );
+	            };
+
+	            return _react2.default.createElement(
+	                "div",
+	                { className: "video-player-controls" },
+	                _react2.default.createElement(
+	                    "div",
+	                    { className: "progress", style: { marginTop: "5px" } },
+	                    _react2.default.createElement("div", { className: "progress-bar", style: { width: "60%" } })
+	                ),
+	                _react2.default.createElement(
+	                    "div",
+	                    { className: "btn-group" },
+	                    renderPlayPause(),
+	                    _react2.default.createElement(
+	                        "button",
+	                        { className: "btn btn-default btn-sm" },
+	                        _react2.default.createElement("span", { className: "glyphicon glyphicon-chevron-left" })
+	                    ),
+	                    _react2.default.createElement(
+	                        "button",
+	                        { className: "btn btn-default btn-sm" },
+	                        _react2.default.createElement("span", { className: "glyphicon glyphicon-chevron-right" })
+	                    ),
+	                    _react2.default.createElement(
+	                        "button",
+	                        { className: "btn btn-default btn-sm" },
+	                        _react2.default.createElement("span", { className: "glyphicon glyphicon-fullscreen" })
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return VideoControls;
+	}(_react2.default.Component);
+
+	;
+
+	exports.default = VideoControls;
+
+/***/ },
+/* 281 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -29341,7 +29516,7 @@
 	exports.default = NotFound;
 
 /***/ },
-/* 281 */
+/* 282 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29354,7 +29529,7 @@
 
 	var _reactRouterRedux = __webpack_require__(269);
 
-	var _actionTypes = __webpack_require__(282);
+	var _actionTypes = __webpack_require__(283);
 
 	var ActionTypes = _interopRequireWildcard(_actionTypes);
 
@@ -29381,16 +29556,75 @@
 	    }
 	};
 
+	var defaultPlayerState = {
+	    paused: true,
+	    duration: 0,
+	    currentPosition: 0,
+	    fullscreen: false
+	};
+	var player = function player() {
+	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultPlayerState;
+	    var action = arguments[1];
+
+	    switch (action.type) {
+	        case ActionTypes.PLAY_VIDEO:
+	            return Object.assign({}, state, {
+	                paused: false
+	            });
+	        case ActionTypes.PAUSE_VIDEO:
+	            return Object.assign({}, state, {
+	                paused: true
+	            });
+	        default:
+	            return state;
+	    }
+	};
+
 	exports.default = (0, _redux.combineReducers)({
 	    routing: _reactRouterRedux.routerReducer,
-	    playlist: playlist
+	    playlist: playlist,
+	    player: player
 	});
 
 /***/ },
-/* 282 */
+/* 283 */
 /***/ function(module, exports) {
 
-	"use strict";
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var PLAY_VIDEO = exports.PLAY_VIDEO = 'PLAY_VIDEO';
+	var PAUSE_VIDEO = exports.PAUSE_VIDEO = 'PAUSE_VIDEO';
+
+/***/ },
+/* 284 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.pauseVideo = exports.playVideo = undefined;
+
+	var _actionTypes = __webpack_require__(283);
+
+	var ActionTypes = _interopRequireWildcard(_actionTypes);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	var playVideo = exports.playVideo = function playVideo() {
+	    return {
+	        type: ActionTypes.PLAY_VIDEO
+	    };
+	};
+	var pauseVideo = exports.pauseVideo = function pauseVideo() {
+	    return {
+	        type: ActionTypes.PAUSE_VIDEO
+	    };
+	};
 
 /***/ }
 /******/ ]);
