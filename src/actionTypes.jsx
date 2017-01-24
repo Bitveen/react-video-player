@@ -1,2 +1,4 @@
 export const PLAY_VIDEO  = 'PLAY_VIDEO';
 export const PAUSE_VIDEO = 'PAUSE_VIDEO';
+export const UPDATE_POSITION = 'UPDATE_POSITION';
+export const DEFAULT_PLAYER = 'DEFAULT_PLAYER';

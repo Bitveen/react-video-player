@@ -8,15 +8,18 @@ import * as ActionTypes from 'actionTypes';
 const defaultPlaylistState = [
     {
         id: 1,
-        url: 'jellyfish-1'
+        url: 'jellyfish-1',
+        duration: 30
     },
     {
         id: 2,
-        url: 'jellyfish-2'
+        url: 'jellyfish-2',
+        duration: 30
     },
     {
         id: 3,
-        url: 'jellyfish-3'
+        url: 'jellyfish-3',
+        duration: 30
     }
 ];
 
@@ -29,13 +32,12 @@ const playlist = (state = defaultPlaylistState, action) => {
 };
 
 
-
 const defaultPlayerState = {
     paused: true,
-    duration: 0,
-    currentPosition: 0,
-    fullscreen: false
+    currentPosition: 0
 };
+
+
 const player = (state = defaultPlayerState, action) => {
     switch (action.type) {
         case ActionTypes.PLAY_VIDEO:
@@ -43,15 +45,22 @@ const player = (state = defaultPlayerState, action) => {
                 paused: false
             });
         case ActionTypes.PAUSE_VIDEO:
+        return Object.assign({}, state, {
+            paused: true
+        });
+        case ActionTypes.UPDATE_POSITION:
             return Object.assign({}, state, {
-                paused: true
+                currentPosition: action.position
+            });
+        case ActionTypes.DEFAULT_PLAYER:
+            return Object.assign({}, state, {
+                paused: true,
+                currentPosition: 0
             });
         default:
             return state;
     }
 };
-
-
 
 
 

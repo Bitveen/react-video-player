@@ -5,14 +5,29 @@ class VideoControls extends React.Component {
 
     constructor(props) {
         super(props);
+        this.renderProgress = this.renderProgress.bind(this);
     }
+
+
+    renderProgress() {
+        let { video, player } = this.props;
+        let width = (player.currentPosition / video.duration) * 100;
+
+        return (
+            <div className="progress" style={{marginTop: "5px"}}>
+                <div className="progress-bar" style={{width: width + "%"}}></div>
+            </div>
+        );
+
+    }
+
 
     render() {
 
-        let {play, pause, paused} = this.props;
+        let {play, pause, player, video} = this.props;
 
         const renderPlayPause = () => {
-            if (paused) {
+            if (player.paused) {
                 return (
                     <button className="btn btn-default btn-sm" onClick={() => play()}>
                         <span className="glyphicon glyphicon-play"/>
@@ -31,22 +46,11 @@ class VideoControls extends React.Component {
 
         return (
             <div className="video-player-controls">
-                <div className="progress" style={{marginTop: "5px"}}>
-                    <div className="progress-bar" style={{width: "60%"}}></div>
-                </div>
+                {this.renderProgress()}
                 <div className="btn-group">
                     {renderPlayPause()}
-                    <button className="btn btn-default btn-sm">
-                        <span className="glyphicon glyphicon-chevron-left"/>
-                    </button>
-                    <button className="btn btn-default btn-sm">
-                        <span className="glyphicon glyphicon-chevron-right"/>
-                    </button>
-                    <button className="btn btn-default btn-sm">
-                        <span className="glyphicon glyphicon-fullscreen" />
-                    </button>
                 </div>
-
+                <span className="pull-right"><strong>{Math.floor(player.currentPosition)} / {video.duration} sec.</strong></span>
             </div>
         );
     }

@@ -66,7 +66,7 @@
 
 	var _routes2 = _interopRequireDefault(_routes);
 
-	var _reducers = __webpack_require__(282);
+	var _reducers = __webpack_require__(284);
 
 	var _reducers2 = _interopRequireDefault(_reducers);
 
@@ -29060,7 +29060,7 @@
 
 	var _VideoPlayer2 = _interopRequireDefault(_VideoPlayer);
 
-	var _NotFound = __webpack_require__(281);
+	var _NotFound = __webpack_require__(283);
 
 	var _NotFound2 = _interopRequireDefault(_NotFound);
 
@@ -29274,8 +29274,6 @@
 	    value: true
 	});
 
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _react = __webpack_require__(1);
@@ -29288,11 +29286,7 @@
 
 	var _VideoControls2 = _interopRequireDefault(_VideoControls);
 
-	var _actions = __webpack_require__(284);
-
-	var _reactDom = __webpack_require__(32);
-
-	var _reactDom2 = _interopRequireDefault(_reactDom);
+	var _actions = __webpack_require__(281);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -29306,8 +29300,10 @@
 	    var url = _ref.params.url;
 
 	    return {
-	        player: state.player,
-	        url: url
+	        video: state.playlist.filter(function (video) {
+	            return video.url === url;
+	        })[0],
+	        player: state.player
 	    };
 	};
 	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
@@ -29317,6 +29313,12 @@
 	        },
 	        pauseVideo: function pauseVideo() {
 	            return dispatch((0, _actions.pauseVideo)());
+	        },
+	        updatePosition: function updatePosition(time) {
+	            return dispatch((0, _actions.updatePosition)(time));
+	        },
+	        defaultPlayer: function defaultPlayer() {
+	            return dispatch((0, _actions.defaultPlayer)());
 	        }
 	    };
 	};
@@ -29331,6 +29333,10 @@
 
 	        _this.play = _this.play.bind(_this);
 	        _this.pause = _this.pause.bind(_this);
+	        _this.onPlay = _this.onPlay.bind(_this);
+	        _this.onPause = _this.onPause.bind(_this);
+	        _this.onTimeUpdate = _this.onTimeUpdate.bind(_this);
+	        _this.onEnded = _this.onEnded.bind(_this);
 	        return _this;
 	    }
 
@@ -29339,21 +29345,61 @@
 	        value: function play() {
 	            var videoElem = this.refs.player;
 	            videoElem.play();
+	        }
+	    }, {
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            var videoElem = this.refs.player;
+	            videoElem.addEventListener('pause', this.onPause);
+	            videoElem.addEventListener('play', this.onPlay);
+	            videoElem.addEventListener('timeupdate', this.onTimeUpdate);
+	            videoElem.addEventListener('ended', this.onEnded);
+	        }
+	    }, {
+	        key: 'onPause',
+	        value: function onPause() {
+	            this.props.pauseVideo();
+	        }
+	    }, {
+	        key: 'onPlay',
+	        value: function onPlay(event) {
+	            if (this.props.player.currentPosition >= event.target.currentTime) {
+	                this.props.updatePosition(0);
+	            }
 	            this.props.playVideo();
+	        }
+	    }, {
+	        key: 'onTimeUpdate',
+	        value: function onTimeUpdate(event) {
+	            this.props.updatePosition(event.target.currentTime);
+	        }
+	    }, {
+	        key: 'onEnded',
+	        value: function onEnded() {
+	            this.props.pauseVideo();
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            var videoElem = this.refs.player;
+	            videoElem.removeEventListener('pause', this.onPause);
+	            videoElem.removeEventListener('play', this.onPlay);
+	            videoElem.removeEventListener('timeupdate', this.onTimeUpdate);
+	            videoElem.removeEventListener('ended', this.onEnded);
+	            this.props.defaultPlayer();
 	        }
 	    }, {
 	        key: 'pause',
 	        value: function pause() {
 	            var videoElem = this.refs.player;
 	            videoElem.pause();
-	            this.props.pauseVideo();
 	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
 	            var _props = this.props,
-	                player = _props.player,
-	                url = _props.url;
+	                video = _props.video,
+	                player = _props.player;
 
 	            return _react2.default.createElement(
 	                'div',
@@ -29361,7 +29407,8 @@
 	                _react2.default.createElement(
 	                    'h3',
 	                    null,
-	                    'VideoPlayer'
+	                    'VideoPlayer: ',
+	                    video.url
 	                ),
 	                _react2.default.createElement(
 	                    'div',
@@ -29369,11 +29416,11 @@
 	                    _react2.default.createElement(
 	                        'video',
 	                        { className: 'embed-responsive-item', id: 'player', ref: 'player' },
-	                        _react2.default.createElement('source', { src: '/video/' + url + '.mkv', type: 'video/mp4' })
+	                        _react2.default.createElement('source', { src: '/video/' + video.url + '.mkv', type: 'video/mp4' })
 	                    )
 	                ),
 	                _react2.default.createElement('hr', null),
-	                _react2.default.createElement(_VideoControls2.default, _extends({}, player, { play: this.play, pause: this.pause }))
+	                _react2.default.createElement(_VideoControls2.default, { video: video, player: player, play: this.play, pause: this.pause })
 	            );
 	        }
 	    }]);
@@ -29415,20 +29462,39 @@
 	    function VideoControls(props) {
 	        _classCallCheck(this, VideoControls);
 
-	        return _possibleConstructorReturn(this, (VideoControls.__proto__ || Object.getPrototypeOf(VideoControls)).call(this, props));
+	        var _this = _possibleConstructorReturn(this, (VideoControls.__proto__ || Object.getPrototypeOf(VideoControls)).call(this, props));
+
+	        _this.renderProgress = _this.renderProgress.bind(_this);
+	        return _this;
 	    }
 
 	    _createClass(VideoControls, [{
+	        key: "renderProgress",
+	        value: function renderProgress() {
+	            var _props = this.props,
+	                video = _props.video,
+	                player = _props.player;
+
+	            var width = player.currentPosition / video.duration * 100;
+
+	            return _react2.default.createElement(
+	                "div",
+	                { className: "progress", style: { marginTop: "5px" } },
+	                _react2.default.createElement("div", { className: "progress-bar", style: { width: width + "%" } })
+	            );
+	        }
+	    }, {
 	        key: "render",
 	        value: function render() {
-	            var _props = this.props,
-	                play = _props.play,
-	                pause = _props.pause,
-	                paused = _props.paused;
+	            var _props2 = this.props,
+	                play = _props2.play,
+	                pause = _props2.pause,
+	                player = _props2.player,
+	                video = _props2.video;
 
 
 	            var renderPlayPause = function renderPlayPause() {
-	                if (paused) {
+	                if (player.paused) {
 	                    return _react2.default.createElement(
 	                        "button",
 	                        { className: "btn btn-default btn-sm", onClick: function onClick() {
@@ -29449,29 +29515,22 @@
 	            return _react2.default.createElement(
 	                "div",
 	                { className: "video-player-controls" },
-	                _react2.default.createElement(
-	                    "div",
-	                    { className: "progress", style: { marginTop: "5px" } },
-	                    _react2.default.createElement("div", { className: "progress-bar", style: { width: "60%" } })
-	                ),
+	                this.renderProgress(),
 	                _react2.default.createElement(
 	                    "div",
 	                    { className: "btn-group" },
-	                    renderPlayPause(),
+	                    renderPlayPause()
+	                ),
+	                _react2.default.createElement(
+	                    "span",
+	                    { className: "pull-right" },
 	                    _react2.default.createElement(
-	                        "button",
-	                        { className: "btn btn-default btn-sm" },
-	                        _react2.default.createElement("span", { className: "glyphicon glyphicon-chevron-left" })
-	                    ),
-	                    _react2.default.createElement(
-	                        "button",
-	                        { className: "btn btn-default btn-sm" },
-	                        _react2.default.createElement("span", { className: "glyphicon glyphicon-chevron-right" })
-	                    ),
-	                    _react2.default.createElement(
-	                        "button",
-	                        { className: "btn btn-default btn-sm" },
-	                        _react2.default.createElement("span", { className: "glyphicon glyphicon-fullscreen" })
+	                        "strong",
+	                        null,
+	                        Math.floor(player.currentPosition),
+	                        " / ",
+	                        video.duration,
+	                        " sec."
 	                    )
 	                )
 	            );
@@ -29487,6 +29546,61 @@
 
 /***/ },
 /* 281 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.defaultPlayer = exports.updatePosition = exports.pauseVideo = exports.playVideo = undefined;
+
+	var _actionTypes = __webpack_require__(282);
+
+	var ActionTypes = _interopRequireWildcard(_actionTypes);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	var playVideo = exports.playVideo = function playVideo() {
+	    return {
+	        type: ActionTypes.PLAY_VIDEO
+	    };
+	};
+	var pauseVideo = exports.pauseVideo = function pauseVideo() {
+	    return {
+	        type: ActionTypes.PAUSE_VIDEO
+	    };
+	};
+
+	var updatePosition = exports.updatePosition = function updatePosition(position) {
+	    return {
+	        type: ActionTypes.UPDATE_POSITION,
+	        position: position
+	    };
+	};
+
+	var defaultPlayer = exports.defaultPlayer = function defaultPlayer() {
+	    return {
+	        type: ActionTypes.DEFAULT_PLAYER
+	    };
+	};
+
+/***/ },
+/* 282 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var PLAY_VIDEO = exports.PLAY_VIDEO = 'PLAY_VIDEO';
+	var PAUSE_VIDEO = exports.PAUSE_VIDEO = 'PAUSE_VIDEO';
+	var UPDATE_POSITION = exports.UPDATE_POSITION = 'UPDATE_POSITION';
+	var DEFAULT_PLAYER = exports.DEFAULT_PLAYER = 'DEFAULT_PLAYER';
+
+/***/ },
+/* 283 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -29516,7 +29630,7 @@
 	exports.default = NotFound;
 
 /***/ },
-/* 282 */
+/* 284 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29529,7 +29643,7 @@
 
 	var _reactRouterRedux = __webpack_require__(269);
 
-	var _actionTypes = __webpack_require__(283);
+	var _actionTypes = __webpack_require__(282);
 
 	var ActionTypes = _interopRequireWildcard(_actionTypes);
 
@@ -29537,13 +29651,16 @@
 
 	var defaultPlaylistState = [{
 	    id: 1,
-	    url: 'jellyfish-1'
+	    url: 'jellyfish-1',
+	    duration: 30
 	}, {
 	    id: 2,
-	    url: 'jellyfish-2'
+	    url: 'jellyfish-2',
+	    duration: 30
 	}, {
 	    id: 3,
-	    url: 'jellyfish-3'
+	    url: 'jellyfish-3',
+	    duration: 30
 	}];
 
 	var playlist = function playlist() {
@@ -29558,10 +29675,9 @@
 
 	var defaultPlayerState = {
 	    paused: true,
-	    duration: 0,
-	    currentPosition: 0,
-	    fullscreen: false
+	    currentPosition: 0
 	};
+
 	var player = function player() {
 	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultPlayerState;
 	    var action = arguments[1];
@@ -29575,6 +29691,15 @@
 	            return Object.assign({}, state, {
 	                paused: true
 	            });
+	        case ActionTypes.UPDATE_POSITION:
+	            return Object.assign({}, state, {
+	                currentPosition: action.position
+	            });
+	        case ActionTypes.DEFAULT_PLAYER:
+	            return Object.assign({}, state, {
+	                paused: true,
+	                currentPosition: 0
+	            });
 	        default:
 	            return state;
 	    }
@@ -29585,46 +29710,6 @@
 	    playlist: playlist,
 	    player: player
 	});
-
-/***/ },
-/* 283 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var PLAY_VIDEO = exports.PLAY_VIDEO = 'PLAY_VIDEO';
-	var PAUSE_VIDEO = exports.PAUSE_VIDEO = 'PAUSE_VIDEO';
-
-/***/ },
-/* 284 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.pauseVideo = exports.playVideo = undefined;
-
-	var _actionTypes = __webpack_require__(283);
-
-	var ActionTypes = _interopRequireWildcard(_actionTypes);
-
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-	var playVideo = exports.playVideo = function playVideo() {
-	    return {
-	        type: ActionTypes.PLAY_VIDEO
-	    };
-	};
-	var pauseVideo = exports.pauseVideo = function pauseVideo() {
-	    return {
-	        type: ActionTypes.PAUSE_VIDEO
-	    };
-	};
 
 /***/ }
 /******/ ]);

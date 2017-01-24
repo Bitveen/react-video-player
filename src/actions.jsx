@@ -11,3 +11,16 @@ export const pauseVideo = () => {
         type: ActionTypes.PAUSE_VIDEO
     };
 };
+
+export const updatePosition = (position) => {
+    return {
+        type: ActionTypes.UPDATE_POSITION,
+        position
+    };
+};
+
+export const defaultPlayer = () => {
+    return {
+        type: ActionTypes.DEFAULT_PLAYER
+    };
+};
