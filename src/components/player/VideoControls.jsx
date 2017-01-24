@@ -9,12 +9,14 @@ class VideoControls extends React.Component {
     }
 
 
+
+
     renderProgress() {
         let { video, player } = this.props;
         let width = (player.currentPosition / video.duration) * 100;
 
         return (
-            <div className="progress" style={{marginTop: "5px"}}>
+            <div className="progress" style={{marginTop: "5px", cursor: "pointer" }} onClick={(event) => this.props.handleProgressClick(event)}>
                 <div className="progress-bar" style={{width: width + "%"}}></div>
             </div>
         );

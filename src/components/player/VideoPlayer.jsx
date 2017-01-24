@@ -4,7 +4,6 @@ import VideoControls from 'VideoControls';
 import { playVideo, pauseVideo, updatePosition, defaultPlayer } from 'actions';
 
 
-
 const mapStateToProps = (state, { params: { url }}) => {
     return {
         video: state.playlist.filter(video => video.url === url)[0],
@@ -26,13 +25,14 @@ class VideoPlayer extends React.Component {
 
     constructor(props) {
         super(props);
-        this.play           = this.play.bind(this);
-        this.pause          = this.pause.bind(this);
-        this.onPlay         = this.onPlay.bind(this);
-        this.onPause        = this.onPause.bind(this);
-        this.onTimeUpdate   = this.onTimeUpdate.bind(this);
-        this.onEnded        = this.onEnded.bind(this);
-        this.changePosition = this.changePosition.bind(this);
+        this.play                = this.play.bind(this);
+        this.pause               = this.pause.bind(this);
+        this.onPlay              = this.onPlay.bind(this);
+        this.onPause             = this.onPause.bind(this);
+        this.onTimeUpdate        = this.onTimeUpdate.bind(this);
+        this.onEnded             = this.onEnded.bind(this);
+        this.changePosition      = this.changePosition.bind(this);
+        this.handleProgressClick = this.handleProgressClick.bind(this);
     }
 
     play() {
@@ -95,6 +95,17 @@ class VideoPlayer extends React.Component {
         videoElem.pause();
     }
 
+
+    handleProgressClick(event) {
+        let progressDimensions = event.currentTarget.getBoundingClientRect();
+        let newPosition = Math.ceil((this.props.video.duration * (event.clientX - progressDimensions.left)) / progressDimensions.width);
+        this.props.updatePosition(newPosition);
+        this.play();
+        this.refs.player.currentTime = newPosition;
+    }
+
+
+
     render() {
         let { video, player, updatePosition } = this.props;
         return (
@@ -106,7 +117,7 @@ class VideoPlayer extends React.Component {
                     </video>
                 </div>
                 <hr/>
-                <VideoControls changePosition={this.changePosition} video={video} player={player} play={this.play} pause={this.pause} />
+                <VideoControls handleProgressClick={this.handleProgressClick} changePosition={this.changePosition} video={video} player={player} play={this.play} pause={this.pause} />
             </div>
         );
     }

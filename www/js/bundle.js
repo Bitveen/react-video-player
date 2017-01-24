@@ -29338,6 +29338,7 @@
 	        _this.onTimeUpdate = _this.onTimeUpdate.bind(_this);
 	        _this.onEnded = _this.onEnded.bind(_this);
 	        _this.changePosition = _this.changePosition.bind(_this);
+	        _this.handleProgressClick = _this.handleProgressClick.bind(_this);
 	        return _this;
 	    }
 
@@ -29403,6 +29404,15 @@
 	            videoElem.pause();
 	        }
 	    }, {
+	        key: 'handleProgressClick',
+	        value: function handleProgressClick(event) {
+	            var progressDimensions = event.currentTarget.getBoundingClientRect();
+	            var newPosition = Math.ceil(this.props.video.duration * (event.clientX - progressDimensions.left) / progressDimensions.width);
+	            this.props.updatePosition(newPosition);
+	            this.play();
+	            this.refs.player.currentTime = newPosition;
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            var _props = this.props,
@@ -29429,7 +29439,7 @@
 	                    )
 	                ),
 	                _react2.default.createElement('hr', null),
-	                _react2.default.createElement(_VideoControls2.default, { changePosition: this.changePosition, video: video, player: player, play: this.play, pause: this.pause })
+	                _react2.default.createElement(_VideoControls2.default, { handleProgressClick: this.handleProgressClick, changePosition: this.changePosition, video: video, player: player, play: this.play, pause: this.pause })
 	            );
 	        }
 	    }]);
@@ -29480,6 +29490,8 @@
 	    _createClass(VideoControls, [{
 	        key: "renderProgress",
 	        value: function renderProgress() {
+	            var _this2 = this;
+
 	            var _props = this.props,
 	                video = _props.video,
 	                player = _props.player;
@@ -29488,7 +29500,9 @@
 
 	            return _react2.default.createElement(
 	                "div",
-	                { className: "progress", style: { marginTop: "5px" } },
+	                { className: "progress", style: { marginTop: "5px", cursor: "pointer" }, onClick: function onClick(event) {
+	                        return _this2.props.handleProgressClick(event);
+	                    } },
 	                _react2.default.createElement("div", { className: "progress-bar", style: { width: width + "%" } })
 	            );
 	        }
