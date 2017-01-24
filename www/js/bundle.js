@@ -29319,6 +29319,9 @@
 	        },
 	        defaultPlayer: function defaultPlayer() {
 	            return dispatch((0, _actions.defaultPlayer)());
+	        },
+	        toggleFullScreen: function toggleFullScreen() {
+	            return dispatch((0, _actions.toggleFullScreen)());
 	        }
 	    };
 	};
@@ -29339,6 +29342,7 @@
 	        _this.onEnded = _this.onEnded.bind(_this);
 	        _this.changePosition = _this.changePosition.bind(_this);
 	        _this.handleProgressClick = _this.handleProgressClick.bind(_this);
+	        _this.handleToggleFullScreen = _this.handleToggleFullScreen.bind(_this);
 	        return _this;
 	    }
 
@@ -29386,6 +29390,19 @@
 	            var videoElem = this.refs.player;
 	            this.props.updatePosition(videoElem.currentTime + position);
 	            videoElem.currentTime = videoElem.currentTime + position;
+	        }
+	    }, {
+	        key: 'handleToggleFullScreen',
+	        value: function handleToggleFullScreen() {
+	            var videoElem = this.refs.player;
+	            if (videoElem.requestFullscreen) {
+	                videoElem.requestFullscreen();
+	            } else if (videoElem.mozRequestFullScreen) {
+	                videoElem.mozRequestFullScreen();
+	            } else if (videoElem.webkitRequestFullscreen) {
+	                videoElem.webkitRequestFullscreen();
+	            }
+	            this.props.toggleFullScreen();
 	        }
 	    }, {
 	        key: 'componentWillUnmount',
@@ -29439,7 +29456,7 @@
 	                    )
 	                ),
 	                _react2.default.createElement('hr', null),
-	                _react2.default.createElement(_VideoControls2.default, { handleProgressClick: this.handleProgressClick, changePosition: this.changePosition, video: video, player: player, play: this.play, pause: this.pause })
+	                _react2.default.createElement(_VideoControls2.default, { toggleFullScreen: this.handleToggleFullScreen, handleProgressClick: this.handleProgressClick, changePosition: this.changePosition, video: video, player: player, play: this.play, pause: this.pause })
 	            );
 	        }
 	    }]);
@@ -29514,7 +29531,8 @@
 	                pause = _props2.pause,
 	                player = _props2.player,
 	                video = _props2.video,
-	                changePosition = _props2.changePosition;
+	                changePosition = _props2.changePosition,
+	                toggleFullScreen = _props2.toggleFullScreen;
 
 
 	            var renderPlayPause = function renderPlayPause() {
@@ -29557,6 +29575,13 @@
 	                                return changePosition(1);
 	                            } },
 	                        _react2.default.createElement("span", { className: "glyphicon glyphicon-chevron-right" })
+	                    ),
+	                    _react2.default.createElement(
+	                        "button",
+	                        { className: "btn btn-default btn-sm", onClick: function onClick() {
+	                                return toggleFullScreen();
+	                            } },
+	                        _react2.default.createElement("span", { className: "glyphicon glyphicon-fullscreen" })
 	                    )
 	                ),
 	                _react2.default.createElement(
@@ -29591,7 +29616,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.defaultPlayer = exports.updatePosition = exports.pauseVideo = exports.playVideo = undefined;
+	exports.toggleFullScreen = exports.defaultPlayer = exports.updatePosition = exports.pauseVideo = exports.playVideo = undefined;
 
 	var _actionTypes = __webpack_require__(282);
 
@@ -29623,6 +29648,12 @@
 	    };
 	};
 
+	var toggleFullScreen = exports.toggleFullScreen = function toggleFullScreen() {
+	    return {
+	        type: ActionTypes.TOGGLE_FULL_SCREEN
+	    };
+	};
+
 /***/ },
 /* 282 */
 /***/ function(module, exports) {
@@ -29636,6 +29667,7 @@
 	var PAUSE_VIDEO = exports.PAUSE_VIDEO = 'PAUSE_VIDEO';
 	var UPDATE_POSITION = exports.UPDATE_POSITION = 'UPDATE_POSITION';
 	var DEFAULT_PLAYER = exports.DEFAULT_PLAYER = 'DEFAULT_PLAYER';
+	var TOGGLE_FULL_SCREEN = exports.TOGGLE_FULL_SCREEN = 'TOGGLE_FULL_SCREEN';
 
 /***/ },
 /* 283 */
@@ -29713,7 +29745,8 @@
 
 	var defaultPlayerState = {
 	    paused: true,
-	    currentPosition: 0
+	    currentPosition: 0,
+	    fullscreen: false
 	};
 
 	var player = function player() {
@@ -29737,6 +29770,10 @@
 	            return Object.assign({}, state, {
 	                paused: true,
 	                currentPosition: 0
+	            });
+	        case ActionTypes.TOGGLE_FULL_SCREEN:
+	            return Object.assign({}, state, {
+	                fullscreen: !state.fullscreen
 	            });
 	        default:
 	            return state;

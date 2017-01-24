@@ -24,3 +24,9 @@ export const defaultPlayer = () => {
         type: ActionTypes.DEFAULT_PLAYER
     };
 };
+
+export const toggleFullScreen = () => {
+    return {
+        type: ActionTypes.TOGGLE_FULL_SCREEN
+    };
+};

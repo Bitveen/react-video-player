@@ -34,7 +34,8 @@ const playlist = (state = defaultPlaylistState, action) => {
 
 const defaultPlayerState = {
     paused: true,
-    currentPosition: 0
+    currentPosition: 0,
+    fullscreen: false
 };
 
 
@@ -56,6 +57,10 @@ const player = (state = defaultPlayerState, action) => {
             return Object.assign({}, state, {
                 paused: true,
                 currentPosition: 0
+            });
+        case ActionTypes.TOGGLE_FULL_SCREEN:
+            return Object.assign({}, state, {
+                fullscreen: !state.fullscreen
             });
         default:
             return state;

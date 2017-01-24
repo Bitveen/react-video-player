@@ -26,7 +26,7 @@ class VideoControls extends React.Component {
 
     render() {
 
-        let {play, pause, player, video, changePosition} = this.props;
+        let {play, pause, player, video, changePosition, toggleFullScreen} = this.props;
 
         const renderPlayPause = () => {
             if (player.paused) {
@@ -57,6 +57,10 @@ class VideoControls extends React.Component {
                     <button className="btn btn-default btn-sm" onClick={() => changePosition(1)}>
                         <span className="glyphicon glyphicon-chevron-right"/>
                     </button>
+                    <button className="btn btn-default btn-sm" onClick={() => toggleFullScreen()}>
+                        <span className="glyphicon glyphicon-fullscreen" />
+                    </button>
+
                 </div>
                 <span className="pull-right"><strong>{Math.floor(player.currentPosition)} / {video.duration} sec.</strong></span>
             </div>

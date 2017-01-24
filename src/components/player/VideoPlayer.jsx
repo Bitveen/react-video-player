@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import VideoControls from 'VideoControls';
-import { playVideo, pauseVideo, updatePosition, defaultPlayer } from 'actions';
+import { playVideo, pauseVideo, updatePosition, defaultPlayer, toggleFullScreen } from 'actions';
 
 
 const mapStateToProps = (state, { params: { url }}) => {
@@ -15,7 +15,8 @@ const mapDispatchToProps = (dispatch) => {
         playVideo: () => dispatch(playVideo()),
         pauseVideo: () => dispatch(pauseVideo()),
         updatePosition: (time) => dispatch(updatePosition(time)),
-        defaultPlayer: () => dispatch(defaultPlayer())
+        defaultPlayer: () => dispatch(defaultPlayer()),
+        toggleFullScreen: () => dispatch(toggleFullScreen())
     };
 };
 
@@ -25,14 +26,15 @@ class VideoPlayer extends React.Component {
 
     constructor(props) {
         super(props);
-        this.play                = this.play.bind(this);
-        this.pause               = this.pause.bind(this);
-        this.onPlay              = this.onPlay.bind(this);
-        this.onPause             = this.onPause.bind(this);
-        this.onTimeUpdate        = this.onTimeUpdate.bind(this);
-        this.onEnded             = this.onEnded.bind(this);
-        this.changePosition      = this.changePosition.bind(this);
-        this.handleProgressClick = this.handleProgressClick.bind(this);
+        this.play                   = this.play.bind(this);
+        this.pause                  = this.pause.bind(this);
+        this.onPlay                 = this.onPlay.bind(this);
+        this.onPause                = this.onPause.bind(this);
+        this.onTimeUpdate           = this.onTimeUpdate.bind(this);
+        this.onEnded                = this.onEnded.bind(this);
+        this.changePosition         = this.changePosition.bind(this);
+        this.handleProgressClick    = this.handleProgressClick.bind(this);
+        this.handleToggleFullScreen = this.handleToggleFullScreen.bind(this);
     }
 
     play() {
@@ -79,6 +81,17 @@ class VideoPlayer extends React.Component {
     }
 
 
+    handleToggleFullScreen() {
+        let videoElem = this.refs.player;
+        if (videoElem.requestFullscreen) {
+            videoElem.requestFullscreen();
+        } else if (videoElem.mozRequestFullScreen) {
+            videoElem.mozRequestFullScreen();
+        } else if (videoElem.webkitRequestFullscreen) {
+            videoElem.webkitRequestFullscreen();
+        }
+        this.props.toggleFullScreen();
+    }
 
 
     componentWillUnmount() {
@@ -117,7 +130,7 @@ class VideoPlayer extends React.Component {
                     </video>
                 </div>
                 <hr/>
-                <VideoControls handleProgressClick={this.handleProgressClick} changePosition={this.changePosition} video={video} player={player} play={this.play} pause={this.pause} />
+                <VideoControls toggleFullScreen={this.handleToggleFullScreen} handleProgressClick={this.handleProgressClick} changePosition={this.changePosition} video={video} player={player} play={this.play} pause={this.pause} />
             </div>
         );
     }
