@@ -14,7 +14,7 @@ const mapDispatchToProps = (dispatch) => {
     return {
         playVideo: () => dispatch(playVideo()),
         pauseVideo: () => dispatch(pauseVideo()),
-        updatePosition: (time) => dispatch(updatePosition(time)),
+        updatePosition: time => dispatch(updatePosition(time)),
         defaultPlayer: () => dispatch(defaultPlayer()),
         toggleFullScreen: () => dispatch(toggleFullScreen())
     };
@@ -37,11 +37,6 @@ class VideoPlayer extends React.Component {
         this.handleToggleFullScreen = this.handleToggleFullScreen.bind(this);
     }
 
-    play() {
-        let videoElem = this.refs.player;
-        videoElem.play();
-    }
-
 
     componentDidMount() {
         let videoElem = this.refs.player;
@@ -52,7 +47,22 @@ class VideoPlayer extends React.Component {
     }
 
 
+    componentWillUnmount() {
+        let videoElem = this.refs.player;
+        videoElem.removeEventListener('pause', this.onPause);
+        videoElem.removeEventListener('play', this.onPlay);
+        videoElem.removeEventListener('timeupdate', this.onTimeUpdate);
+        videoElem.removeEventListener('ended', this.onEnded);
+        this.props.defaultPlayer();
+    }
 
+
+
+
+    play() {
+        let videoElem = this.refs.player;
+        videoElem.play();
+    }
 
     onPause() {
         this.props.pauseVideo();
@@ -94,14 +104,6 @@ class VideoPlayer extends React.Component {
     }
 
 
-    componentWillUnmount() {
-        let videoElem = this.refs.player;
-        videoElem.removeEventListener('pause', this.onPause);
-        videoElem.removeEventListener('play', this.onPlay);
-        videoElem.removeEventListener('timeupdate', this.onTimeUpdate);
-        videoElem.removeEventListener('ended', this.onEnded);
-        this.props.defaultPlayer();
-    }
 
     pause() {
         let videoElem = this.refs.player;
@@ -130,7 +132,12 @@ class VideoPlayer extends React.Component {
                     </video>
                 </div>
                 <hr/>
-                <VideoControls toggleFullScreen={this.handleToggleFullScreen} handleProgressClick={this.handleProgressClick} changePosition={this.changePosition} video={video} player={player} play={this.play} pause={this.pause} />
+                <VideoControls
+                    toggleFullScreen={this.handleToggleFullScreen}
+                    handleProgressClick={this.handleProgressClick}
+                    changePosition={this.changePosition}
+                    video={video} player={player}
+                    play={this.play} pause={this.pause} />
             </div>
         );
     }

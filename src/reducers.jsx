@@ -22,8 +22,6 @@ const defaultPlaylistState = [
         duration: 30
     }
 ];
-
-
 const playlist = (state = defaultPlaylistState, action) => {
     switch (action.type) {
         default:
@@ -32,13 +30,14 @@ const playlist = (state = defaultPlaylistState, action) => {
 };
 
 
+
+
+
 const defaultPlayerState = {
     paused: true,
     currentPosition: 0,
     fullscreen: false
 };
-
-
 const player = (state = defaultPlayerState, action) => {
     switch (action.type) {
         case ActionTypes.PLAY_VIDEO:
