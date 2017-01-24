@@ -26,12 +26,13 @@ class VideoPlayer extends React.Component {
 
     constructor(props) {
         super(props);
-        this.play         = this.play.bind(this);
-        this.pause        = this.pause.bind(this);
-        this.onPlay       = this.onPlay.bind(this);
-        this.onPause      = this.onPause.bind(this);
-        this.onTimeUpdate = this.onTimeUpdate.bind(this);
-        this.onEnded      = this.onEnded.bind(this);
+        this.play           = this.play.bind(this);
+        this.pause          = this.pause.bind(this);
+        this.onPlay         = this.onPlay.bind(this);
+        this.onPause        = this.onPause.bind(this);
+        this.onTimeUpdate   = this.onTimeUpdate.bind(this);
+        this.onEnded        = this.onEnded.bind(this);
+        this.changePosition = this.changePosition.bind(this);
     }
 
     play() {
@@ -71,7 +72,11 @@ class VideoPlayer extends React.Component {
     }
 
 
-
+    changePosition(position) {
+        let videoElem = this.refs.player;
+        this.props.updatePosition(videoElem.currentTime + position);
+        videoElem.currentTime = videoElem.currentTime + position;
+    }
 
 
 
@@ -91,7 +96,7 @@ class VideoPlayer extends React.Component {
     }
 
     render() {
-        let { video, player } = this.props;
+        let { video, player, updatePosition } = this.props;
         return (
             <div className="video-player">
                 <h3>VideoPlayer: {video.url}</h3>
@@ -101,7 +106,7 @@ class VideoPlayer extends React.Component {
                     </video>
                 </div>
                 <hr/>
-                <VideoControls video={video} player={player} play={this.play} pause={this.pause} />
+                <VideoControls changePosition={this.changePosition} video={video} player={player} play={this.play} pause={this.pause} />
             </div>
         );
     }

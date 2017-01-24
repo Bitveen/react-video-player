@@ -24,7 +24,7 @@ class VideoControls extends React.Component {
 
     render() {
 
-        let {play, pause, player, video} = this.props;
+        let {play, pause, player, video, changePosition} = this.props;
 
         const renderPlayPause = () => {
             if (player.paused) {
@@ -49,6 +49,12 @@ class VideoControls extends React.Component {
                 {this.renderProgress()}
                 <div className="btn-group">
                     {renderPlayPause()}
+                    <button className="btn btn-default btn-sm" onClick={() => changePosition(-1)}>
+                        <span className="glyphicon glyphicon-chevron-left"/>
+                    </button>
+                    <button className="btn btn-default btn-sm" onClick={() => changePosition(1)}>
+                        <span className="glyphicon glyphicon-chevron-right"/>
+                    </button>
                 </div>
                 <span className="pull-right"><strong>{Math.floor(player.currentPosition)} / {video.duration} sec.</strong></span>
             </div>

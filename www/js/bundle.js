@@ -29337,6 +29337,7 @@
 	        _this.onPause = _this.onPause.bind(_this);
 	        _this.onTimeUpdate = _this.onTimeUpdate.bind(_this);
 	        _this.onEnded = _this.onEnded.bind(_this);
+	        _this.changePosition = _this.changePosition.bind(_this);
 	        return _this;
 	    }
 
@@ -29379,6 +29380,13 @@
 	            this.props.pauseVideo();
 	        }
 	    }, {
+	        key: 'changePosition',
+	        value: function changePosition(position) {
+	            var videoElem = this.refs.player;
+	            this.props.updatePosition(videoElem.currentTime + position);
+	            videoElem.currentTime = videoElem.currentTime + position;
+	        }
+	    }, {
 	        key: 'componentWillUnmount',
 	        value: function componentWillUnmount() {
 	            var videoElem = this.refs.player;
@@ -29399,7 +29407,8 @@
 	        value: function render() {
 	            var _props = this.props,
 	                video = _props.video,
-	                player = _props.player;
+	                player = _props.player,
+	                updatePosition = _props.updatePosition;
 
 	            return _react2.default.createElement(
 	                'div',
@@ -29420,7 +29429,7 @@
 	                    )
 	                ),
 	                _react2.default.createElement('hr', null),
-	                _react2.default.createElement(_VideoControls2.default, { video: video, player: player, play: this.play, pause: this.pause })
+	                _react2.default.createElement(_VideoControls2.default, { changePosition: this.changePosition, video: video, player: player, play: this.play, pause: this.pause })
 	            );
 	        }
 	    }]);
@@ -29490,7 +29499,8 @@
 	                play = _props2.play,
 	                pause = _props2.pause,
 	                player = _props2.player,
-	                video = _props2.video;
+	                video = _props2.video,
+	                changePosition = _props2.changePosition;
 
 
 	            var renderPlayPause = function renderPlayPause() {
@@ -29519,7 +29529,21 @@
 	                _react2.default.createElement(
 	                    "div",
 	                    { className: "btn-group" },
-	                    renderPlayPause()
+	                    renderPlayPause(),
+	                    _react2.default.createElement(
+	                        "button",
+	                        { className: "btn btn-default btn-sm", onClick: function onClick() {
+	                                return changePosition(-1);
+	                            } },
+	                        _react2.default.createElement("span", { className: "glyphicon glyphicon-chevron-left" })
+	                    ),
+	                    _react2.default.createElement(
+	                        "button",
+	                        { className: "btn btn-default btn-sm", onClick: function onClick() {
+	                                return changePosition(1);
+	                            } },
+	                        _react2.default.createElement("span", { className: "glyphicon glyphicon-chevron-right" })
+	                    )
 	                ),
 	                _react2.default.createElement(
 	                    "span",
